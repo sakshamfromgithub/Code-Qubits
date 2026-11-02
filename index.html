@@ -699,22 +699,23 @@
     `;
 
     Object.assign(credit.style, {
-        position: "fixed",
-        bottom: "8px",
-        left: "15px",
-        zIndex: "9999",
-        display: "flex",
-        gap: "5px",
-        fontSize: "10px",
-        color: "#9299ad",
-        background: "#10131e",
-        padding: "6px 10px",
-        border: "1px solid #292e40",
-        borderRadius: "8px",
-        pointerEvents: "none",
-        userSelect: "none"
-    });
-
+    position: "fixed",
+    bottom: "8px",
+    left: "15px",
+    right: "auto",
+    width: "max-content",
+    zIndex: "99999",
+    display: "flex",
+    gap: "5px",
+    fontSize: "10px",
+    color: "#9299ad",
+    background: "#10131e",
+    padding: "6px 10px",
+    border: "1px solid #292e40",
+    borderRadius: "8px",
+    pointerEvents: "none",
+    userSelect: "none"
+});
     credit.querySelector("strong").style.color = "#a78bfa";
 
     document.body.appendChild(credit);

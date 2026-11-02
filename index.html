@@ -724,7 +724,23 @@
       try {
         const history = chat.messages.slice(0, -1).slice(-24).map(m => ({ role: m.role, text: m.text }));
         const response = await fetch("/.netlify/functions/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, history, memory: localStorage.getItem(MEMORY_KEY) || "" }) });
-        const data = await response.json(); if (!response.ok) throw new Error(data.error || "Request failed");
+       
+const rawResponse = await response.text();
+
+let data;
+
+try {
+    data = JSON.parse(rawResponse);
+} catch (error) {
+    throw new Error(
+        `Netlify Function returned invalid response. HTTP ${response.status}. Response: ${rawResponse.slice(0, 200) || "Empty response"}`
+    );
+}
+
+if (!response.ok) {
+    throw new Error(data.error || `HTTP Error ${response.status}`);
+}
+
         chat.messages.push({ role: "model", text: data.reply || "I couldn't generate a response. Please try again." });
       } catch (err) { chat.messages.push({ role: "model", text: "Sorry, I couldn't connect right now. " + err.message + "\n\nPlease check your connection and Netlify environment variable GEMINI_API_KEY." }) }
       finally { chat.updatedAt = Date.now(); saveChats(); busy = false; $("sendBtn").disabled = false; renderChat(); input.focus() }

@@ -742,7 +742,7 @@ if (!response.ok) {
 }
 
         chat.messages.push({ role: "model", text: data.reply || "I couldn't generate a response. Please try again." });
-      } catch (err) { chat.messages.push({ role: "model", text: "Sorry, I couldn't connect right now. " + err.message + "\n\nPlease check your connection and Netlify environment variable GEMINI_API_KEY." }) }
+      } catch (err) { chat.messages.push({ role: "model", text: "Sorry, I couldn't connect right now. " + err.message + "\n\nPlease check your connection" }) }
       finally { chat.updatedAt = Date.now(); saveChats(); busy = false; $("sendBtn").disabled = false; renderChat(); input.focus() }
     }
     $("newChat").addEventListener("click", newChat); $("sendBtn").addEventListener("click", sendMessage);

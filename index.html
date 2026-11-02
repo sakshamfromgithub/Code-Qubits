@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b13">
+  <title>Code Qubits — AI Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090b13;
+      --panel: #10131e;
+      --panel2: #151927;
+      --line: #252b3b;
+      --text: #eef0fa;
+      --muted: #9299ad;
+      --accent: #8b5cf6;
+      --accent2: #38bdf8;
+      --user: #22283a
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      height: 100dvh;
+      overflow: hidden
+    }
+
+    button,
+    textarea,
+    input {
+      font: inherit
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    .app {
+      height: 100dvh;
+      display: flex
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #0d1019;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 13px;
+      flex-shrink: 0;
+      transition: transform .25s
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 4px 8px 22px
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #8b5cf6, #2563eb);
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      box-shadow: 0 6px 24px #6d42d955
+    }
+
+    .brand-name {
+      font: 700 18px 'Space Grotesk';
+      letter-spacing: -.5px
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .new-chat {
+      border: 1px solid #39304f;
+      background: #1a1730;
+      color: #e9ddff;
+      border-radius: 11px;
+      padding: 11px 13px;
+      text-align: left;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 600;
+      width: 100%;
+      margin-bottom: 18px
+    }
+
+    .new-chat:hover {
+      background: #25203e
+    }
+
+    .side-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: #727a90;
+      padding: 9px 9px
+    }
+
+    .history-list {
+      overflow: auto;
+      flex: 1
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 9px;
+      border-radius: 9px;
+      color: #b9bfd0;
+      font-size: 13px;
+      cursor: pointer;
+      margin: 2px 0
+    }
+
+    .history-item:hover,
+    .history-item.active {
+      background: #1a1e2c;
+      color: #fff
+    }
+
+    .history-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1
+    }
+
+    .history-actions {
+      display: none;
+      gap: 3px
+    }
+
+    .history-item:hover .history-actions {
+      display: flex
+    }
+
+    .mini-btn {
+      border: 0;
+      background: transparent;
+      color: #8f97ab;
+      padding: 3px 5px;
+      border-radius: 5px
+    }
+
+    .mini-btn:hover {
+      background: #30364a;
+      color: #fff
+    }
+
+    .side-bottom {
+      border-top: 1px solid var(--line);
+      padding-top: 12px
+    }
+
+    .side-tool {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #b7bdce;
+      padding: 10px 9px;
+      text-align: left;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px
+    }
+
+    .side-tool:hover {
+      background: #1a1e2c;
+      color: #fff
+    }
+
+    .local-note {
+      font-size: 10px;
+      color: #70788c;
+      padding: 8px 9px;
+      line-height: 1.5
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative
+    }
+
+    .topbar {
+      height: 62px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      flex-shrink: 0
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .menu-btn {
+      display: none
+    }
+
+    .model-pill {
+      font-size: 12px;
+      color: #c9c1ff;
+      background: #211b37;
+      border: 1px solid #3a2c5c;
+      border-radius: 30px;
+      padding: 6px 10px
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px
+    }
+
+    .top-actions button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: #c4cada;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 12px
+    }
+
+    .chat-scroll {
+      flex: 1;
+      overflow: auto;
+      padding: 28px 18px 20px;
+      scroll-behavior: smooth
+    }
+
+    .chat-inner {
+      max-width: 820px;
+      margin: 0 auto
+    }
+
+    .welcome {
+      min-height: 58vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px
+    }
+
+    .welcome-orb {
+      width: 66px;
+      height: 66px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #32215e, #12334b);
+      border: 1px solid #59418a;
+      font-size: 31px;
+      box-shadow: 0 12px 50px #7144c433;
+      margin-bottom: 20px
+    }
+
+    .welcome h1 {
+      font: 600 clamp(28px, 4vw, 40px) 'Space Grotesk';
+      margin: 0 0 10px;
+      letter-spacing: -1.2px
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #b69aff, #62c9f5);
+      background-clip: text;
+      color: transparent
+    }
+
+    .welcome p {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 470px;
+      line-height: 1.7;
+      margin: 0 0 26px
+    }
+
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: min(100%, 560px)
+    }
+
+    .suggestion {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: #cbd0df;
+      text-align: left;
+      padding: 13px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.5
+    }
+
+    .suggestion:hover {
+      border-color: #7552bd;
+      background: #171629
+    }
+
+    .suggestion b {
+      display: block;
+      color: #f0edff;
+      font-size: 13px;
+      margin-bottom: 3px
+    }
+
+    .message {
+      display: flex;
+      gap: 13px;
+      margin: 0 auto 25px;
+      max-width: 820px;
+      align-items: flex-start
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      background: #29213e;
+      color: #d9caff
+    }
+
+    .message.user .avatar {
+      background: #24344b;
+      color: #b9e3ff
+    }
+
+    .msg-content {
+      min-width: 0;
+      flex: 1;
+      padding-top: 3px
+    }
+
+    .msg-head {
+      font-size: 12px;
+      color: #9da5ba;
+      margin-bottom: 7px;
+      font-weight: 600
+    }
+
+    .msg-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #e1e4ee;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere
+    }
+
+    .message.user .msg-text {
+      background: var(--user);
+      padding: 11px 14px;
+      border-radius: 4px 13px 13px 13px;
+      display: inline-block;
+      max-width: 100%
+    }
+
+    .msg-tools {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      opacity: .7
+    }
+
+    .msg-tools button {
+      border: 0;
+      background: transparent;
+      color: #9ba3b7;
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 5px
+    }
+
+    .msg-tools button:hover {
+      background: #202638;
+      color: #fff
+    }
+
+    .typing {
+      color: #9ca3b8;
+      font-size: 13px;
+      padding: 10px 0
+    }
+
+    .composer-wrap {
+      padding: 12px 18px 18px;
+      flex-shrink: 0
+    }
+
+    .composer {
+      max-width: 820px;
+      margin: auto;
+      background: #141827;
+      border: 1px solid #30364a;
+      border-radius: 17px;
+      padding: 10px 12px 8px;
+      box-shadow: 0 12px 40px #0005
+    }
+
+    .composer:focus-within {
+      border-color: #7051b5
+    }
+
+    .composer textarea {
+      display: block;
+      width: 100%;
+      resize: none;
+      min-height: 48px;
+      max-height: 180px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #f0f1f8;
+      padding: 7px 6px;
+      font-size: 14px;
+      line-height: 1.6
+    }
+
+    .composer textarea::placeholder {
+      color: #777f95
+    }
+
+    .composer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 2px 0
+    }
+
+    .composer-hint {
+      font-size: 10px;
+      color: #737b90
+    }
+
+    .send-btn {
+      width: 35px;
+      height: 35px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #8b5cf6, #4f73e8);
+      color: #fff;
+      font-size: 17px
+    }
+
+    .send-btn:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .disclaimer {
+      text-align: center;
+      font-size: 10px;
+      color: #6f778b;
+      margin: 9px auto 0;
+      max-width: 820px
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0009;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      padding: 16px
+    }
+
+    .overlay.show {
+      display: flex
+    }
+
+    .modal {
+      width: min(540px, 100%);
+      background: #141827;
+      border: 1px solid #30364a;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 80px #0009
+    }
+
+    .modal h2 {
+      font: 600 19px 'Space Grotesk';
+      margin: 0 0 7px
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6
+    }
+
+    .modal textarea {
+      width: 100%;
+      height: 160px;
+      resize: vertical;
+      background: #0c101a;
+      border: 1px solid #30364a;
+      border-radius: 10px;
+      color: #eef0fa;
+      padding: 12px;
+      outline: 0;
+      margin: 10px 0
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px
+    }
+
+    .modal-actions button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 13px;
+      background: #202638;
+      color: #e8eaf2
+    }
+
+    .modal-actions .primary {
+      background: #7548d5;
+      border-color: #7548d5
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #252b3b;
+      border: 1px solid #414a62;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 30
+    }
+
+    .toast.show {
+      opacity: 1
+    }
+
+    @media(max-width:760px) {
+      .sidebar {
+        position: fixed;
+        z-index: 20;
+        inset: 0 auto 0 0;
+        transform: translateX(-105%);
+        box-shadow: 20px 0 50px #0008
+      }
+
+      .sidebar.open {
+        transform: translateX(0)
+      }
+
+      .menu-btn {
+        display: inline-block;
+        border: 0;
+        background: transparent;
+        color: #d8dbea;
+        font-size: 20px
+      }
+
+      .topbar {
+        padding: 0 13px
+      }
+
+      .chat-scroll {
+        padding: 20px 13px
+      }
+
+      .composer-wrap {
+        padding: 8px 12px 12px
+      }
+
+      .suggestions {
+        grid-template-columns: 1fr
+      }
+
+      .welcome {
+        min-height: 50vh
+      }
+
+      .top-actions button {
+        padding: 7px 8px
+      }
+
+      .model-pill {
+        font-size: 10px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">⚛</div>
+        <div>
+          <div class="brand-name">Code Qubits</div>
+          <div class="brand-sub">Think beyond the ordinary</div>
+        </div>
+      </div>
+      <button class="new-chat" id="newChat">＋ <span>New chat</span></button>
+      <div class="side-label">Your conversations</div>
+      <div class="history-list" id="historyList"></div>
+      <div class="side-bottom">
+        <button class="side-tool" id="memoryBtn">🧠 <span>Memory & preferences</span></button>
+        <button class="side-tool" id="exportBtn">⇩ <span>Export conversations</span></button>
+        <div class="local-note">🔒 Chats and memory are saved in this browser on this device.</div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+
+        <div class="top-actions"><button id="clearBtn">Clear chat</button></div>
+      </header>
+      <section class="chat-scroll" id="chatScroll">
+        <div class="chat-inner" id="chatArea"></div>
+      </section>
+      <div class="composer-wrap">
+        <div class="composer"><textarea id="prompt" rows="1" placeholder="Message Code Qubits..."
+            aria-label="Message Code Qubits"></textarea>
+          <div class="composer-bottom"><span class="composer-hint">Enter to send · Shift + Enter for new
+              line</span><button class="send-btn" id="sendBtn" aria-label="Send">↑</button></div>
+        </div>
+        <div class="disclaimer">Code Qubits can make mistakes. Verify important information.</div>
+      </div>
+    </main>
+  </div>
+  <div class="overlay" id="memoryOverlay">
+    <div class="modal">
+      <h2>🧠 Memory & preferences</h2>
+      <p>Add information you want Code Qubits to consider in future chats — for example, your learning goals, preferred
+        language, or ongoing projects. This stays in this browser and is included as context when you chat.</p><textarea
+        id="memoryText" placeholder="Example: I am learning Python. Explain concepts in simple Hinglish..."></textarea>
+      <div class="modal-actions"><button id="cancelMemory">Cancel</button><button class="primary" id="saveMemory">Save
+          memory</button></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const $ = id => document.getElementById(id);
+    const STORAGE_KEY = "codequbits_chats_v1";
+    const MEMORY_KEY = "codequbits_memory_v1";
+    let chats = loadChats(), activeId = null, busy = false;
+
+    function loadChats() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") } catch { return [] } }
+    function saveChats() { localStorage.setItem(STORAGE_KEY, JSON.stringify(chats)) }
+    function makeId() { return "cq_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7) }
+    function currentChat() { return chats.find(c => c.id === activeId) }
+    function toast(msg) { $("toast").textContent = msg; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 2200) }
+    function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])) }
+    function renderHistory() {
+      const list = $("historyList"); list.innerHTML = "";
+      [...chats].sort((a, b) => b.updatedAt - a.updatedAt).forEach(c => {
+        const row = document.createElement("div"); row.className = "history-item" + (c.id === activeId ? " active" : "");
+        row.innerHTML = `<span>◷</span><span class="history-title">${esc(c.title || "New chat")}</span><span class="history-actions"><button class="mini-btn rename" title="Rename">✎</button><button class="mini-btn del" title="Delete">×</button></span>`;
+        row.addEventListener("click", e => { if (e.target.closest("button")) return; openChat(c.id) });
+        row.querySelector(".rename").addEventListener("click", e => { e.stopPropagation(); const name = prompt("Rename conversation:", c.title); if (name && name.trim()) { c.title = name.trim(); saveChats(); renderHistory() } });
+        row.querySelector(".del").addEventListener("click", e => { e.stopPropagation(); if (confirm("Delete this conversation?")) { chats = chats.filter(x => x.id !== c.id); if (activeId === c.id) activeId = null; saveChats(); renderHistory(); renderChat() } });
+        list.appendChild(row);
+      });
+    }
+    function welcome() { return `<div class="welcome"><div class="welcome-orb">⚛</div><h1>Meet <span class="gradient">Code Qubits</span></h1><p>Your AI thinking partner for coding, learning, brainstorming, and everyday questions. What would you like to explore today?</p><div class="suggestions"><button class="suggestion" data-prompt="Explain a difficult programming concept in simple terms."><b>💻 Learn to code</b>Break down a tricky programming concept.</button><button class="suggestion" data-prompt="Help me plan a useful AI/ML project from scratch."><b>🧠 Build something</b>Plan an AI/ML project step by step.</button><button class="suggestion" data-prompt="Help me understand a topic for my exams with examples."><b>📚 Study smarter</b>Understand a topic with examples.</button><button class="suggestion" data-prompt="Give me 5 creative ideas for a useful tech product."><b>✨ Brainstorm ideas</b>Explore creative product ideas.</button></div></div>` }
+    function renderChat() {
+      const area = $("chatArea"), chat = currentChat();
+      if (!chat || !chat.messages.length) { area.innerHTML = welcome(); area.querySelectorAll("[data-prompt]").forEach(b => b.addEventListener("click", () => { $("prompt").value = b.dataset.prompt; sendMessage() })); }
+      else {
+        area.innerHTML = chat.messages.map((m, i) => `<div class="message ${m.role === "user" ? "user" : "assistant"}"><div class="avatar">${m.role === "user" ? "You" : "⚛"}</div><div class="msg-content"><div class="msg-head">${m.role === "user" ? "You" : "Code Qubits"}</div><div class="msg-text">${esc(m.text)}</div>${m.role === "model" ? `<div class="msg-tools"><button data-copy="${i}">Copy</button></div>` : ""}</div></div>`).join("");
+        area.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => { const m = chat.messages[Number(b.dataset.copy)]; navigator.clipboard.writeText(m.text).then(() => toast("Copied to clipboard")) }));
+      }
+      $("chatScroll").scrollTop = $("chatScroll").scrollHeight;
+      renderHistory();
+    }
+    function openChat(id) { activeId = id; renderChat(); $("sidebar").classList.remove("open") }
+    function newChat() { activeId = null; renderChat(); $("prompt").focus(); $("sidebar").classList.remove("open") }
+    async function sendMessage() {
+      if (busy) return; const input = $("prompt"), text = input.value.trim(); if (!text) return;
+      if (!activeId) { const c = { id: makeId(), title: text.slice(0, 42), messages: [], updatedAt: Date.now() }; chats.push(c); activeId = c.id }
+      const chat = currentChat(); chat.messages.push({ role: "user", text }); chat.updatedAt = Date.now(); input.value = ""; input.style.height = "auto"; busy = true; $("sendBtn").disabled = true;
+      renderChat(); const typing = document.createElement("div"); typing.className = "typing"; typing.id = "typing"; typing.textContent = "Code Qubits is thinking…"; $("chatArea").appendChild(typing); $("chatScroll").scrollTop = $("chatScroll").scrollHeight;
+      try {
+        const history = chat.messages.slice(0, -1).slice(-24).map(m => ({ role: m.role, text: m.text }));
+        const response = await fetch("/.netlify/functions/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, history, memory: localStorage.getItem(MEMORY_KEY) || "" }) });
+        const data = await response.json(); if (!response.ok) throw new Error(data.error || "Request failed");
+        chat.messages.push({ role: "model", text: data.reply || "I couldn't generate a response. Please try again." });
+      } catch (err) { chat.messages.push({ role: "model", text: "Sorry, I couldn't connect right now. " + err.message + "\n\nPlease check your connection and Netlify environment variable GEMINI_API_KEY." }) }
+      finally { chat.updatedAt = Date.now(); saveChats(); busy = false; $("sendBtn").disabled = false; renderChat(); input.focus() }
+    }
+    $("newChat").addEventListener("click", newChat); $("sendBtn").addEventListener("click", sendMessage);
+    $("prompt").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage() } });
+    $("prompt").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 180) + "px" });
+    $("clearBtn").addEventListener("click", () => { if (activeId) { if (confirm("Clear messages in this conversation?")) { const c = currentChat(); c.messages = []; c.title = "New chat"; saveChats(); renderChat() } } else renderChat() });
+    $("menuBtn").addEventListener("click", () => $("sidebar").classList.toggle("open"));
+    $("memoryBtn").addEventListener("click", () => { $("memoryText").value = localStorage.getItem(MEMORY_KEY) || ""; $("memoryOverlay").classList.add("show") });
+    $("cancelMemory").addEventListener("click", () => $("memoryOverlay").classList.remove("show"));
+    $("saveMemory").addEventListener("click", () => { localStorage.setItem(MEMORY_KEY, $("memoryText").value.trim()); $("memoryOverlay").classList.remove("show"); toast("Memory saved") });
+    $("memoryOverlay").addEventListener("click", e => { if (e.target === $("memoryOverlay")) $("memoryOverlay").classList.remove("show") });
+    $("exportBtn").addEventListener("click", () => { const blob = new Blob([JSON.stringify({ app: "Code Qubits", exportedAt: new Date().toISOString(), chats, memory: localStorage.getItem(MEMORY_KEY) || "" }, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "code-qubits-history.json"; a.click(); URL.revokeObjectURL(a.href) });
+    renderChat();
+  </script>
+</body>
+
+</html>

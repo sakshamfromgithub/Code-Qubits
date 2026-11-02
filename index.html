@@ -679,7 +679,48 @@
           memory</button></div>
     </div>
   </div>
-  <div class="toast" id="toast"></div>
+ <div class="toast" id="toast"></div>
+ 
+  <!--b  -->
+  
+<script>
+(function () {
+    const credit = document.createElement("div");
+
+    credit.id = "developer-credit";
+
+    const line1 = "\u0044\u0065\u0073\u0069\u0067\u006e\u0065\u0064\u0020\u0026\u0020\u0044\u0065\u0076\u0065\u006c\u006f\u0070\u0065\u0064\u0020\u0062\u0079";
+
+    const line2 = "\u0053\u0061\u006b\u0073\u0068\u0061\u006d\u0020\u0053\u0068\u0072\u0069\u0076\u0061\u0073\u0074\u0061\u0076";
+
+    credit.innerHTML = `
+        <span>${line1}</span>
+        <strong>${line2}</strong>
+    `;
+
+    Object.assign(credit.style, {
+        position: "fixed",
+        bottom: "8px",
+        right: "15px",
+        zIndex: "9999",
+        display: "flex",
+        gap: "5px",
+        fontSize: "10px",
+        color: "#9299ad",
+        background: "#10131e",
+        padding: "6px 10px",
+        border: "1px solid #292e40",
+        borderRadius: "8px",
+        pointerEvents: "none",
+        userSelect: "none"
+    });
+
+    credit.querySelector("strong").style.color = "#a78bfa";
+
+    document.body.appendChild(credit);
+})();
+</script>
+<!-- b - end -->
   <script>
     const $ = id => document.getElementById(id);
     const STORAGE_KEY = "codequbits_chats_v1";
